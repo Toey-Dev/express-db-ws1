@@ -10,4 +10,28 @@ router.get("/", async (req, res) => {
   res.json({ data: books });
 });
 
+router.get("/:id", async (req, res) => {
+  const id = req.params.id;
+  const books = await booksRepo.getBookById(id);
+  if (!books) {
+    res.status(404).json({ error: "Book not found." });
+  }
+  res.json({ data: books });
+});
+
+router.post("/", async (req, res) => {
+  // const { title, author } = req.body || {};
+  const title = req?.body?.title;
+  const author = req?.body?.author;
+  console.log(`==== title = ${title} ==== 
+    === author = ${author} ====`);
+
+  if (!title || !author) {
+    return res.status(400).json({ message: "title and author are required." });
+  }
+  // ตรวจสอบสถานะ
+  const created = await booksRepo.createBook(title, author);
+
+  res.status(201).json({ data: created });
+});
 module.exports = router;
